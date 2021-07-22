@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node dist/.",
     "lint": "eslint \"src/**/*.ts\" --cache",
+    "lint:fix": "eslint \"src/**/*.ts\" --cache --fix",
     "build": "tsc",
     "test": "jest",
     "prepare": "npm run build"

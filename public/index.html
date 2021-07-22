@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <span id="error"></span>
   <svg height="600px" viewBox="0 0 700 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
     <g transform="matrix(0.939759,0,0,1.09009,-25.5406,-29.8149)">
         <path d="M669.601,180.133C669.601,115.903 609.112,63.756 534.607,63.756L264.62,63.756C190.115,63.756 129.626,115.903 129.626,180.133L129.626,813.941C129.626,878.171 190.115,930.318 264.62,930.318L534.607,930.318C609.112,930.318 669.601,878.171 669.601,813.941L669.601,180.133Z" style="fill:rgb(77,77,77);stroke:black;stroke-width:24.55px;"/>
@@ -49,6 +50,9 @@
           </td>
       </tr>
   </table>
+  <input id="latitude" type="number" step="1">
+  <input id="longitude" type="number" step="1">
+  <input id="change_location" type="button" value="Standort setzen">
   <script src="app.js"></script>
 </body>
 </html>

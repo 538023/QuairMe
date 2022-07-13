@@ -24,7 +24,19 @@ var apiKey string = "c769c9c8e3b504df816db5f30fe31c1c"
 var coordinates openweathermap.Coordinates
 
 func setup(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, strconv.Itoa(aqi))
+	ssid := req.FormValue("ssid")
+	password := req.FormValue("password")
+	latitude := req.FormValue("latitude")
+	longitude := req.FormValue("longitude")
+	latitude_num, err := strconv.ParseFloat(latitude, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	longitude_num, err := strconv.ParseFloat(longitude, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	setupRpi(ssid, password, latitude_num, longitude_num)
 }
 
 func setupRpi(ssid string, password string, latitude float64, longitude float64) {
@@ -61,7 +73,6 @@ func changeSsid(ssid string, password string) {
 	}
 	cmd := exec.Command("sudo", "wpa_cli", "-i", "wlan0", "reconfigure")
 	err = cmd.Run()
-
 	if err != nil {
 		log.Fatal(err)
 	}

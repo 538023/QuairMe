@@ -1,16 +1,21 @@
 package main
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 	"time"
 
 	"github.com/briandowns/openweathermap"
 	"github.com/grandcat/zeroconf"
+	"golang.org/x/crypto/pbkdf2"
 )
 
 var deviceName string = "QuairMe"
@@ -23,11 +28,43 @@ func setup(w http.ResponseWriter, req *http.Request) {
 }
 
 func setupRpi(ssid string, password string, latitude float64, longitude float64) {
+	changeSsid(ssid, password)
 	coordinates = openweathermap.Coordinates{
 		Latitude:  latitude,
 		Longitude: longitude,
 	}
 	saveConfig()
+}
+
+const wpaResultFormat = `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=DE
+
+network={
+	ssid="%s"
+	psk=%s
+}
+`
+const wpaFilePath = "/etc/wpa_supplicant/wpa_supplicant.conf"
+
+func getWpa(ssid string, password string) string {
+	pskBinary := pbkdf2.Key([]byte(password), []byte(ssid), 4096, 32, sha1.New)
+	pskHexString := hex.EncodeToString(pskBinary)
+	return fmt.Sprintf(wpaResultFormat, ssid, pskHexString)
+}
+
+func changeSsid(ssid string, password string) {
+	wpa_supplicant_conf := getWpa(ssid, password)
+	err := os.WriteFile(wpaFilePath, []byte(wpa_supplicant_conf), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cmd := exec.Command("sudo", "wpa_cli", "-i", "wlan0", "reconfigure")
+	err = cmd.Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 func readDeviceName() {
 	name, err := os.Hostname()

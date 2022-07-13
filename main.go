@@ -148,7 +148,7 @@ func simulatedGpioUpdate() {
 }
 
 func simulatedGpioLoop() chan struct{} {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(5 * time.Minute)
 	simulatedGpioUpdate()
 	quit := make(chan struct{})
 	go func() {
@@ -192,7 +192,7 @@ func requestAqi() {
 }
 
 func updateTicker() chan struct{} {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(5 * time.Minute)
 	requestAqi()
 	quit := make(chan struct{})
 	go func() {

@@ -23,6 +23,10 @@ var aqi int = -1
 var apiKey string = "c769c9c8e3b504df816db5f30fe31c1c"
 var coordinates openweathermap.Coordinates
 
+func delete(w http.ResponseWriter, req *http.Request) {
+	deleteSsid()
+}
+
 func setup(w http.ResponseWriter, req *http.Request) {
 	ssid := req.FormValue("ssid")
 	password := req.FormValue("password")
@@ -77,6 +81,19 @@ func changeSsid(ssid string, password string) {
 		log.Fatal(err)
 	}
 }
+
+func deleteSsid() {
+	err := os.WriteFile(wpaFilePath, []byte(""), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cmd := exec.Command("sudo", "wpa_cli", "-i", "wlan0", "reconfigure")
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func readDeviceName() {
 	name, err := os.Hostname()
 	if err != nil {
@@ -220,5 +237,6 @@ func main() {
 	gpi := simulatedGpioLoop()
 	defer close(gpi)
 	http.HandleFunc("/setup", setup)
+	http.HandleFunc("/delete", delete)
 	http.ListenAndServe(":80", nil)
 }

@@ -23,8 +23,14 @@ var aqi int = -1
 var apiKey string = "c769c9c8e3b504df816db5f30fe31c1c"
 var coordinates openweathermap.Coordinates
 
+func test(w http.ResponseWriter, req *http.Request) {
+	w.Write([]byte("123"))
+}
+
 func delete(w http.ResponseWriter, req *http.Request) {
 	deleteSsid()
+	print("delete")
+	w.Write([]byte("deleted"))
 }
 
 func setup(w http.ResponseWriter, req *http.Request) {
@@ -32,6 +38,7 @@ func setup(w http.ResponseWriter, req *http.Request) {
 	password := req.FormValue("password")
 	latitude := req.FormValue("latitude")
 	longitude := req.FormValue("longitude")
+	print(ssid, password, latitude, longitude)
 	latitude_num, err := strconv.ParseFloat(latitude, 64)
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +48,7 @@ func setup(w http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 	setupRpi(ssid, password, latitude_num, longitude_num)
+	w.Write([]byte("done"))
 }
 
 func setupRpi(ssid string, password string, latitude float64, longitude float64) {
@@ -238,5 +246,6 @@ func main() {
 	defer close(gpi)
 	http.HandleFunc("/setup", setup)
 	http.HandleFunc("/delete", delete)
+	http.HandleFunc("/test", test)
 	http.ListenAndServe(":80", nil)
 }

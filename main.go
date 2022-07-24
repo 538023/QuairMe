@@ -83,7 +83,7 @@ func changeSsid(ssid string, password string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	cmd := exec.Command("sudo", "wpa_cli", "-i", "wlan0", "reconfigure")
+	cmd := exec.Command("sudo", "reboot")
 	err = cmd.Run()
 	if err != nil {
 		log.Fatal(err)
@@ -95,7 +95,7 @@ func deleteSsid() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	cmd := exec.Command("sudo", "wpa_cli", "-i", "wlan0", "reconfigure")
+	cmd := exec.Command("sudo", "reboot")
 	err = cmd.Run()
 	if err != nil {
 		log.Fatal(err)

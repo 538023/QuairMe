@@ -31,6 +31,7 @@ func delete(w http.ResponseWriter, req *http.Request) {
 	deleteSsid()
 	print("delete")
 	w.Write([]byte("deleted"))
+	reboot()
 }
 
 func setup(w http.ResponseWriter, req *http.Request) {
@@ -49,6 +50,7 @@ func setup(w http.ResponseWriter, req *http.Request) {
 	}
 	setupRpi(ssid, password, latitude_num, longitude_num)
 	w.Write([]byte("done"))
+	reboot()
 }
 
 func setupRpi(ssid string, password string, latitude float64, longitude float64) {
@@ -77,14 +79,17 @@ func getWpa(ssid string, password string) string {
 	return fmt.Sprintf(wpaResultFormat, ssid, pskHexString)
 }
 
-func changeSsid(ssid string, password string) {
-	wpa_supplicant_conf := getWpa(ssid, password)
-	err := os.WriteFile(wpaFilePath, []byte(wpa_supplicant_conf), 0644)
+func reboot() {
+	cmd := exec.Command("sudo", "reboot")
+	err := cmd.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
-	cmd := exec.Command("sudo", "reboot")
-	err = cmd.Run()
+}
+
+func changeSsid(ssid string, password string) {
+	wpa_supplicant_conf := getWpa(ssid, password)
+	err := os.WriteFile(wpaFilePath, []byte(wpa_supplicant_conf), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,11 +97,6 @@ func changeSsid(ssid string, password string) {
 
 func deleteSsid() {
 	err := os.WriteFile(wpaFilePath, []byte(""), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	cmd := exec.Command("sudo", "reboot")
-	err = cmd.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -108,14 +108,26 @@ func readDeviceName() {
 		return
 	}
 	deviceName = name
+	print(deviceName)
 }
 
-func zeroConf() {
-	server, err := zeroconf.Register(deviceName, "_quairme._tcp", "local.", 80, []string{"txtv=0", "lo=1", "la=2"}, nil)
+func zeroConf() chan struct{} {
+	server, err := zeroconf.Register(deviceName, "_quairme._tcp", "local.", 80, nil, nil)
 	if err != nil {
 		panic(err)
 	}
-	defer server.Shutdown()
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-quit:
+				fmt.Println("hmmmmm")
+				server.Shutdown()
+				return
+			}
+		}
+	}()
+	return quit
 }
 
 func loadConfig() {
@@ -240,7 +252,8 @@ func main() {
 	fmt.Println("loadConfig")
 	loadConfig()
 	fmt.Println("zeroConf")
-	zeroConf()
+	zc := zeroConf()
+	defer close(zc)
 	fmt.Println("ticker")
 	ticker := updateTicker()
 	defer close(ticker)

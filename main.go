@@ -235,17 +235,25 @@ func updateTicker() chan struct{} {
 }
 
 func main() {
+	fmt.Println("readDeviceName")
 	readDeviceName()
+	fmt.Println("loadConfig")
 	loadConfig()
+	fmt.Println("zeroConf")
 	zeroConf()
+	fmt.Println("ticker")
 	ticker := updateTicker()
 	defer close(ticker)
 	//gpi := gpioLoop()
 	//defer close(gpi)
+	fmt.Println("gpio")
 	gpi := simulatedGpioLoop()
 	defer close(gpi)
+	fmt.Println("handle")
 	http.HandleFunc("/setup", setup)
 	http.HandleFunc("/delete", delete)
 	http.HandleFunc("/test", test)
+	fmt.Println("ListenAndServe")
 	http.ListenAndServe(":80", nil)
+	fmt.Println("End")
 }

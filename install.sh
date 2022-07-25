@@ -12,7 +12,7 @@ source ~/.bashrc
 wget "https://github.com/i-teampraxiszwei/AutoHotspot-Installer/raw/master/AutoHotspot-Setup.tar.xz" -4
 tar -xvJf Autohotspot-Setup.tar.xz
 cd Autohotspot
-echo select option 2 and 7
+echo select option 1 and 7
 sudo ./autohotspot-setup.sh
 cd ..
 git clone https://github.com/i-teampraxiszwei/QuairMe
